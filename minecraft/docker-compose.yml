@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  beserver:
+    container_name: beserver
+    image: itzg/minecraft-bedrock-server
+    domainname: ${DNSNAME}
+    deploy:
+     resources:
+       reservations:
+         cpus: '1'
+         memory: 1G
+       limits:
+        cpus: '1'
+        memory: 1G
+    ports:
+      - "19132:19132/udp"
+    volumes:
+      - "nfs-volume:/data"
+#    stdin_open: true
+    tty: true
+    env_file:
+      - env/minecraft.env
+    restart: always
+volumes:
+  nfs-volume:
+    name: beserver-data
+    driver: azure_file
+    driver_opts:
+      share_name: ${STSHARENAME}
+      storage_account_name: ${STNAME}

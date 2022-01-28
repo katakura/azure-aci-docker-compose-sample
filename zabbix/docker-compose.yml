@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  zabbix-web:
+    container_name: web
+    domainname: ${DNSNAME}
+    image: zabbix/zabbix-web-nginx-mysql
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    ports:
+      - "8080:8080"
+    tty: true
+    env_file:
+      - env/zabbix-mysql.env
+      - env/zabbix-web.env
+      - .MYSQL_HOST
+      - .MYSQL_PASSWORD
+    restart: always
+  zabbix-server:
+    container_name: server
+    image: zabbix/zabbix-server-mysql
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    ports:
+      - "10051:10051"
+    tty: true
+    env_file:
+      - env/zabbix-mysql.env
+      - .MYSQL_HOST
+      - .MYSQL_PASSWORD
+    restart: always
+  zabbix-agent:
+    container_name: agent
+    image: zabbix/zabbix-agent
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    ports:
+      - "10050:10050"
+    tty: true
+    env_file:
+      - env/zabbix-agent.env
+    restart: always
